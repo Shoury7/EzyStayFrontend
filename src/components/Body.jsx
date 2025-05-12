@@ -6,6 +6,7 @@ import SingleCard from "./SingleCard";
 import Register from "./Register";
 import Contact from "./Contact";
 import ManageProperties from "./ManageProperties";
+import UpdateListing from "./UpdateListing";
 const Body = () => {
   const appRouter = createBrowserRouter([
     {
@@ -16,6 +17,7 @@ const Body = () => {
       path: "/",
       element: <Listings />,
     },
+
     {
       path: "/contact",
       element: <Contact />,
@@ -35,6 +37,10 @@ const Body = () => {
     {
       path: "/register",
       element: <Register />,
+    },
+    {
+      path: "/update",
+      element: <UpdateListing />,
     },
   ]);
   return (

@@ -15,11 +15,40 @@ const ManageProperties = () => {
     images: [],
   });
 
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (!user || user.role !== "admin") {
       navigate("/not-allowed");
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    // Fetch all listings owned by the user (admin)
+    const fetchListings = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/listings/me", {
+          headers: {
+            Authorization: `Bearer ${user.access_token}`, // Adding the Bearer token in the header
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setListings(data);
+        } else {
+          alert("Failed to fetch listings.");
+        }
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -76,6 +105,32 @@ const ManageProperties = () => {
     }
   };
 
+  const handleDelete = async (listingId) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/listings/${listingId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.access_token}`, // Adding the Bearer token in the header
+          },
+        }
+      );
+
+      if (res.ok) {
+        alert("Listing deleted successfully!");
+        setListings((prev) =>
+          prev.filter((listing) => listing._id !== listingId)
+        );
+      } else {
+        alert("Failed to delete listing.");
+      }
+    } catch (error) {
+      console.error("Error deleting listing:", error);
+      alert("Something went wrong while deleting listing.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900">
       <Header />
@@ -83,6 +138,7 @@ const ManageProperties = () => {
         <h2 className="text-3xl font-bold mb-6 text-yellow-300 italic text-center">
           Manage Properties
         </h2>
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <input
             type="text"
@@ -144,6 +200,50 @@ const ManageProperties = () => {
             Submit Listing
           </button>
         </form>
+
+        <div className="mt-10">
+          <h3 className="text-2xl font-bold text-yellow-300 text-center mb-5">
+            Your Listings
+          </h3>
+          {loading ? (
+            <div className="text-center">Loading...</div>
+          ) : listings.length > 0 ? (
+            <ul className="space-y-4">
+              {listings.map((listing) => (
+                <li
+                  key={listing._id}
+                  className="bg-gray-800 p-4 rounded-lg shadow-md"
+                >
+                  <h4 className="text-xl font-semibold text-white">
+                    {listing.title}
+                  </h4>
+                  <p className="text-white mt-2">{listing.description}</p>
+                  <p className="text-white mt-2">Price: ${listing.price}</p>
+                  <div className="flex justify-between mt-4">
+                    <button
+                      onClick={() =>
+                        navigate("/update", {
+                          state: { listing },
+                        })
+                      }
+                      className="bg-blue-600 text-white py-2 px-4 rounded-md"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDelete(listing._id)}
+                      className="bg-red-600 text-white py-2 px-4 rounded-md"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-white">No listings available.</div>
+          )}
+        </div>
       </div>
     </div>
   );
