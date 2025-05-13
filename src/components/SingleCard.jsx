@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Header";
+import ListingMap from "./ListingMap";
 
 const SingleCard = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const SingleCard = () => {
         if (!listingResponse.ok) throw new Error("Failed to fetch listing");
         const listingData = await listingResponse.json();
         setData(listingData);
+        console.log(listingData);
 
         const reviewResponse = await fetch(
           `http://localhost:5000/api/listings/${id}/reviews`,
@@ -55,7 +57,7 @@ const SingleCard = () => {
     };
 
     fetchListingAndReviews();
-  }, [id, navigate, user]);
+  }, []);
 
   const handleSubmitReview = async () => {
     if (!rating || !comment.trim()) return;
@@ -114,10 +116,10 @@ const SingleCard = () => {
               <strong className="text-white">Country:</strong> {data.country}
             </div>
             <div>
-              <strong className="text-white">Price:</strong> ${data.price}
+              <strong className="text-white">Price:</strong> ₹{data.price}
             </div>
             <div>
-              <strong className="text-white">Posted by:</strong>{" "}
+              <strong className="text-white">Owned by:</strong>{" "}
               {data.createdBy?.email}
             </div>
           </div>
@@ -134,6 +136,12 @@ const SingleCard = () => {
               </div>
             ))}
           </div>
+          {/* Map Section */}
+          {data.geometry && (
+            <div className="mt-6">
+              <ListingMap coordinates={data.geometry.coordinates} />
+            </div>
+          )}
         </div>
       </div>
       {/* Review Submission Form */}
