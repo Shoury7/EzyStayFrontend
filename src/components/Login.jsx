@@ -29,7 +29,7 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        const { role, token, userid, username } = data;
+        const { role, token, userid, username, email } = data;
 
         localStorage.setItem(
           "user",
@@ -38,6 +38,7 @@ const Login = () => {
             access_token: token,
             role: role,
             uid: userid,
+            email: email,
           })
         );
 

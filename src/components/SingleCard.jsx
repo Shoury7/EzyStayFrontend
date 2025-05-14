@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Header";
 import ListingMap from "./ListingMap";
-
+import PaymentButton from "./PaymentButton";
 const SingleCard = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -142,6 +142,7 @@ const SingleCard = () => {
               <ListingMap coordinates={data.geometry.coordinates} />
             </div>
           )}
+          <PaymentButton amount={data.price} user={user} />
         </div>
       </div>
       {/* Review Submission Form */}
