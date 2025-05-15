@@ -3,7 +3,7 @@ import Header from "./Header";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -52,12 +52,15 @@ const Login = () => {
         );
 
         console.log("Login successful:", data);
+        toast.success(`Welcome back ! You've logged in successfully.`);
         navigate("/listings");
       } else {
         console.error("Login failed:", data.message);
+        toast.error("Oops! That email or password doesn't match.");
       }
     } catch (error) {
       console.error("Error making request:", error);
+      toast.error("Something went wrong. Please try again later.");
     }
   };
 

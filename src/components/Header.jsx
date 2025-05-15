@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { removeUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 const Header = () => {
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -16,6 +16,7 @@ const Header = () => {
 
     // Dispatch Redux action to clear user state
     dispatch(removeUser());
+    toast.success("Logout successful. Have a great day!");
     navigate("/listings");
   };
 

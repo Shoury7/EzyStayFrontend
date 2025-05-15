@@ -7,6 +7,7 @@ import Register from "./Register";
 import Contact from "./Contact";
 import ManageProperties from "./ManageProperties";
 import UpdateListing from "./UpdateListing";
+import Notfound from "./Notfound";
 const Body = () => {
   const appRouter = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ const Body = () => {
     {
       path: "/update",
       element: <UpdateListing />,
+    },
+    {
+      path: "*",
+      element: <Notfound />,
     },
   ]);
   return (
