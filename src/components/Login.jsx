@@ -15,16 +15,19 @@ const Login = () => {
     const passwordValue = password.current.value;
 
     try {
-      const response = await fetch("https://ezystaybackend.onrender.com/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: emailValue,
-          password: passwordValue,
-        }),
-      });
+      const response = await fetch(
+        "https://ezystaybackend.onrender.com/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: emailValue,
+            password: passwordValue,
+          }),
+        }
+      );
 
       const data = await response.json();
 
