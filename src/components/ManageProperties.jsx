@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
-
+import { BarLoader } from "react-spinners";
+import { Send, Delete, Edit } from "lucide-react";
+import { toast } from "react-toastify";
 const ManageProperties = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
@@ -28,11 +30,14 @@ const ManageProperties = () => {
     // Fetch all listings owned by the user (admin)
     const fetchListings = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/listings/me", {
-          headers: {
-            Authorization: `Bearer ${user.access_token}`, // Adding the Bearer token in the header
-          },
-        });
+        const res = await fetch(
+          "https://ezystaybackend.onrender.com/api/listings/me",
+          {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`, // Adding the Bearer token in the header
+            },
+          }
+        );
 
         if (res.ok) {
           const data = await res.json();
@@ -46,8 +51,9 @@ const ManageProperties = () => {
         setLoading(false);
       }
     };
-
-    fetchListings();
+    if (user.role === "admin") {
+      fetchListings();
+    }
   }, []);
 
   const handleChange = (e) => {
@@ -67,6 +73,7 @@ const ManageProperties = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const data = new FormData();
     data.append("title", formData.title);
     data.append("description", formData.description);
@@ -78,16 +85,21 @@ const ManageProperties = () => {
     });
 
     try {
-      const res = await fetch("http://localhost:5000/api/listings", {
-        method: "POST",
-        body: data,
-        headers: {
-          Authorization: `Bearer ${user.access_token}`, // Adding the Bearer token in the header
-        },
-      });
-
+      const res = await fetch(
+        "https://ezystaybackend.onrender.com//api/listings",
+        {
+          method: "POST",
+          body: data,
+          headers: {
+            Authorization: `Bearer ${user.access_token}`, // Adding the Bearer token in the header
+          },
+        }
+      );
+      const result = await res.json();
       if (res.ok) {
-        alert("Listing created successfully!");
+        toast.success("Listing created successfully!");
+
+        setListings((prevListings) => [...prevListings, result.listing]);
         setFormData({
           title: "",
           description: "",
@@ -97,18 +109,20 @@ const ManageProperties = () => {
           images: [],
         });
       } else {
-        alert("Failed to create listing.");
+        toast.error("Failed to create listing.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong.");
+      toast.error("Something went wrong.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (listingId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/listings/${listingId}`,
+        `https://ezystaybackend.onrender.com/api/listings/${listingId}`,
         {
           method: "DELETE",
           headers: {
@@ -118,19 +132,28 @@ const ManageProperties = () => {
       );
 
       if (res.ok) {
-        alert("Listing deleted successfully!");
+        toast.success("Listing deleted successfully!");
         setListings((prev) =>
           prev.filter((listing) => listing._id !== listingId)
         );
       } else {
-        alert("Failed to delete listing.");
+        toast.error("Failed to delete listing.");
       }
     } catch (error) {
       console.error("Error deleting listing:", error);
       alert("Something went wrong while deleting listing.");
     }
   };
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <Header />
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <BarLoader color="#3b82f6" width={150} height={4} />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-900">
       <Header />
@@ -195,8 +218,9 @@ const ManageProperties = () => {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-semibold py-2 px-4 rounded-md"
+            className="cursor-pointer flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 transition duration-200 text-white font-semibold py-2 px-4 rounded-md"
           >
+            <Send className="w-5 h-5" />
             Submit Listing
           </button>
         </form>
@@ -226,14 +250,16 @@ const ManageProperties = () => {
                           state: { listing },
                         })
                       }
-                      className="bg-blue-600 text-white py-2 px-4 rounded-md"
+                      className="cursor-pointer bg-blue-600 text-white py-2 px-4 rounded-md flex items-center"
                     >
+                      <Edit size={20} className="mr-2" />
                       Update
                     </button>
                     <button
                       onClick={() => handleDelete(listing._id)}
-                      className="bg-red-600 text-white py-2 px-4 rounded-md"
+                      className="cursor-pointer bg-red-600 text-white py-2 px-4 rounded-md flex items-center"
                     >
+                      <Delete size={20} className="mr-2" />
                       Delete
                     </button>
                   </div>

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Header";
 import ListingMap from "./ListingMap";
 import PaymentButton from "./PaymentButton";
+import { BarLoader } from "react-spinners";
 const SingleCard = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -22,7 +23,7 @@ const SingleCard = () => {
     const fetchListingAndReviews = async () => {
       try {
         const listingResponse = await fetch(
-          `http://localhost:5000/api/listings/${id}`,
+          `https://ezystaybackend.onrender.com/api/listings/${id}`,
           {
             method: "GET",
             headers: {
@@ -38,7 +39,7 @@ const SingleCard = () => {
         console.log(listingData);
 
         const reviewResponse = await fetch(
-          `http://localhost:5000/api/listings/${id}/reviews`,
+          `https://ezystaybackend.onrender.com/api/listings/${id}/reviews`,
           {
             method: "GET",
             headers: {
@@ -66,7 +67,7 @@ const SingleCard = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/listings/${id}/reviews`,
+        `https://ezystaybackend.onrender.com/api/listings/${id}/reviews`,
         {
           method: "POST",
           headers: {
@@ -82,7 +83,8 @@ const SingleCard = () => {
       }
 
       const newReview = await response.json();
-      setReviews((prev) => [newReview, ...prev]);
+
+      setReviews((prev) => [newReview.review, ...prev]);
       setRating(5);
       setComment("");
     } catch (error) {
@@ -95,7 +97,7 @@ const SingleCard = () => {
   if (!data) {
     return (
       <div className="bg-gray-900 min-h-screen flex items-center justify-center text-white">
-        Loading...
+        <BarLoader color="#3b82f6" width={150} height={4} />
       </div>
     );
   }
@@ -103,12 +105,27 @@ const SingleCard = () => {
   return (
     <div className="bg-gray-900 min-h-screen text-white p-6">
       <Header />
-      <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-md overflow-hidden">
+      <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-md overflow-hidden relative">
         <div className="p-6">
           <h1 className="text-3xl font-bold mb-2">{data.title}</h1>
           <p className="text-gray-300 mb-4">{data.description}</p>
 
           <div className="grid grid-cols-2 gap-4 text-gray-400 mb-6">
+            {/* Availability Tag */}
+            <div>
+              <span
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold shadow-sm 
+        ${
+          data.isAvailable
+            ? "bg-green-500 text-white border border-green-400"
+            : "bg-red-500 text-white border border-red-400"
+        }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-white mr-2"></span>
+                {data.isAvailable ? "Available" : "Not Available"}
+              </span>
+            </div>
+
             <div>
               <strong className="text-white">Location:</strong> {data.location}
             </div>
@@ -126,9 +143,11 @@ const SingleCard = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {data.images.map((img, index) => (
-              <div className="w-full aspect-video bg-black flex items-center justify-center rounded-lg overflow-hidden">
+              <div
+                key={index}
+                className="w-full aspect-video bg-black flex items-center justify-center rounded-lg overflow-hidden"
+              >
                 <img
-                  key={index}
                   src={img.url}
                   alt={`Listing ${index + 1}`}
                   className="object-contain max-h-full"
@@ -136,13 +155,20 @@ const SingleCard = () => {
               </div>
             ))}
           </div>
+
           {/* Map Section */}
           {data.geometry && (
             <div className="mt-6">
               <ListingMap coordinates={data.geometry.coordinates} />
             </div>
           )}
-          <PaymentButton amount={data.price} user={user} />
+
+          <PaymentButton
+            amount={data.price}
+            user={user}
+            isAvailable={data.isAvailable}
+            listingId={id}
+          />
         </div>
       </div>
       {/* Review Submission Form */}

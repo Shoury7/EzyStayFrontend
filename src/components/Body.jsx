@@ -8,6 +8,9 @@ import Contact from "./Contact";
 import ManageProperties from "./ManageProperties";
 import UpdateListing from "./UpdateListing";
 import Notfound from "./Notfound";
+import { Feather } from "lucide-react";
+import Features from "./Features";
+import DashBoard from "./DashBoard";
 const Body = () => {
   const appRouter = createBrowserRouter([
     {
@@ -42,6 +45,14 @@ const Body = () => {
     {
       path: "/update",
       element: <UpdateListing />,
+    },
+    {
+      path: "/features",
+      element: <Features />,
+    },
+    {
+      path: "/dashboard",
+      element: <DashBoard />,
     },
     {
       path: "*",

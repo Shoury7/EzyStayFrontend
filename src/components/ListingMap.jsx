@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-mapboxgl.accessToken =
-  "pk.eyJ1Ijoic2hvdXJ5LTA3IiwiYSI6ImNtYW1iZjdrMjA3ZXcybHM4Z2k4cTgyc28ifQ.iFpxtT96_fIzUcPVMF24Kg";
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX;
 
 const ListingMap = ({ coordinates }) => {
   const mapContainer = useRef(null);

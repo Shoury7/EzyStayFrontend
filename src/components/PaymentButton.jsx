@@ -1,12 +1,12 @@
 // src/components/PaymentButton.jsx
 import React from "react";
 
-const PaymentButton = ({ amount, user }) => {
+const PaymentButton = ({ amount, user, isAvailable, listingId }) => {
   const handlePayment = async () => {
     try {
       // Step 1: Create Razorpay order from backend
       const res = await fetch(
-        "http://localhost:5000/api/payments/create-order",
+        "https://ezystaybackend.onrender.com/api/payments/create-order",
         {
           method: "POST",
           headers: {
@@ -39,7 +39,7 @@ const PaymentButton = ({ amount, user }) => {
           handler: async function (response) {
             // Step 3: Verify payment on backend
             const verifyRes = await fetch(
-              "http://localhost:5000/api/payments/verify",
+              "https://ezystaybackend.onrender.com/api/payments/verify",
               {
                 method: "POST",
                 headers: {
@@ -50,6 +50,8 @@ const PaymentButton = ({ amount, user }) => {
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
                   email: user?.email,
+                  listing: listingId,
+                  amount: data.amount,
                 }),
               }
             );
@@ -82,9 +84,15 @@ const PaymentButton = ({ amount, user }) => {
   return (
     <button
       onClick={handlePayment}
-      className="w-full bg-green-600 hover:bg-green-700 py-2 rounded-md font-semibold mt-6"
+      className={`w-full py-2 rounded-md font-semibold mt-6 
+    ${
+      isAvailable
+        ? "bg-green-600 hover:bg-green-700"
+        : "bg-gray-500 cursor-not-allowed"
+    }`}
+      disabled={!isAvailable}
     >
-      Pay ₹{amount}
+      {isAvailable ? `Pay ₹${amount}` : "Not Available"}
     </button>
   );
 };

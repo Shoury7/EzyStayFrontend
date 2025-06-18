@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { LogOut } from "lucide-react";
 const Header = () => {
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
@@ -21,13 +22,15 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-900 text-white px-6 py-4 shadow-lg sticky top-0 z-50">
+    <header className="bg-gray-900 text-white px-6 py-4 shadow-lg border-b border-gray-700 sticky top-0 z-50 mb-5">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <span className="text-3xl font-extrabold text-yellow-300 italic cursor-pointer hover:text-yellow-400 transition-all">
-            EZYSTAY
-          </span>
+          <a href="/">
+            <span className="text-3xl font-extrabold text-yellow-300 italic cursor-pointer hover:text-yellow-400 transition-all">
+              EZYSTAY
+            </span>
+          </a>
         </div>
 
         {/* Hamburger Icon for Mobile */}
@@ -57,7 +60,7 @@ const Header = () => {
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           <a
             href="/"
-            className="hover:text-blue-400 transition text-lg px-3 py-2 rounded-md"
+            className="hover:text-blue-400 transition text-lg px-3 py-2 rounded-md "
           >
             Home
           </a>
@@ -80,7 +83,15 @@ const Header = () => {
               href="/manageproperties"
               className="hover:text-blue-400 transition text-lg px-3 py-2 rounded-md"
             >
-              Manage Properties
+              Host a Property
+            </a>
+          )}
+          {user?.role === "admin" && (
+            <a
+              href="/dashboard"
+              className="hover:text-blue-400 transition text-lg px-3 py-2 rounded-md"
+            >
+              Dashboard
             </a>
           )}
         </nav>
@@ -90,13 +101,14 @@ const Header = () => {
           {user && user.isLoggedIn ? (
             <button
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-md text-sm font-medium transition"
+              className="cursor-pointer bg-red-600 hover:bg-red-700 px-6 py-2 rounded-md text-sm font-medium transition flex items-center"
             >
+              <LogOut size={18} className="mr-2" />
               Logout
             </button>
           ) : (
             <a href="/login">
-              <button className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-md text-sm font-medium transition">
+              <button className="cursor-pointer bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-md text-sm font-medium transition">
                 Login
               </button>
             </a>
@@ -132,10 +144,17 @@ const Header = () => {
               href="/manageproperties"
               className="block text-white hover:text-blue-400 py-2 px-3"
             >
-              Manage Properties
+              Host a property
             </a>
           )}
-
+          {user?.role === "admin" && (
+            <a
+              href="/dashboard"
+              className="block text-white hover:text-blue-400 py-2 px-3"
+            >
+              Dashboard
+            </a>
+          )}
           {/* Mobile Login/Logout Button */}
           <div className="mt-4">
             {user && user.isLoggedIn ? (

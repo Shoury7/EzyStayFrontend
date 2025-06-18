@@ -19,7 +19,7 @@ const Card = ({ id, title, description, price, location, country, image }) => {
             {location}, {country}
           </span>
         </div>
-        <div className="mt-2 font-bold text-green-400">${price}/month</div>
+        <div className="mt-2 font-bold text-green-400">₹ {price}/night</div>
       </div>
     </div>
   );

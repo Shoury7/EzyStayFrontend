@@ -15,7 +15,7 @@ const Login = () => {
     const passwordValue = password.current.value;
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("https://ezystaybackend.onrender.com/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -94,7 +94,7 @@ const Login = () => {
 
             <button
               onClick={handleButtonClick}
-              className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-md font-semibold transition"
+              className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 py-2 rounded-md font-semibold transition"
             >
               Login
             </button>

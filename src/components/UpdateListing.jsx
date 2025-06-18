@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Header";
-
+import { BarLoader } from "react-spinners";
 const UpdateListing = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const { state } = useLocation();
   const listing = state?.listing;
   const user = JSON.parse(localStorage.getItem("user"));
@@ -20,19 +21,23 @@ const UpdateListing = () => {
     price: listing?.price || "",
     location: listing?.location || "",
     country: listing?.country || "",
+    isAvailable: listing?.isAvailable ?? true,
   });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/listings/${listing._id}`,
+        `https://ezystaybackend.onrender.com/api/listings/${listing._id}`,
         {
           method: "PUT",
           headers: {
@@ -50,9 +55,20 @@ const UpdateListing = () => {
       }
     } catch (error) {
       console.error("Error updating listing:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <Header />
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <BarLoader color="#3b82f6" width={150} height={4} />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-black text-white">
       <Header />
@@ -63,6 +79,7 @@ const UpdateListing = () => {
           onSubmit={handleSubmit}
           className="space-y-6 bg-gray-900 p-8 rounded-lg shadow-lg"
         >
+          {/* Title */}
           <div>
             <label
               className="block mb-2 font-medium text-gray-300"
@@ -82,6 +99,7 @@ const UpdateListing = () => {
             />
           </div>
 
+          {/* Description */}
           <div>
             <label
               className="block mb-2 font-medium text-gray-300"
@@ -101,6 +119,7 @@ const UpdateListing = () => {
             />
           </div>
 
+          {/* Price */}
           <div>
             <label
               className="block mb-2 font-medium text-gray-300"
@@ -120,6 +139,7 @@ const UpdateListing = () => {
             />
           </div>
 
+          {/* Location */}
           <div>
             <label
               className="block mb-2 font-medium text-gray-300"
@@ -139,6 +159,7 @@ const UpdateListing = () => {
             />
           </div>
 
+          {/* Country */}
           <div>
             <label
               className="block mb-2 font-medium text-gray-300"
@@ -158,6 +179,22 @@ const UpdateListing = () => {
             />
           </div>
 
+          {/* Availability Toggle */}
+          <div className="flex items-center justify-between mt-6">
+            <span className="text-gray-300 font-medium">Available</span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                name="isAvailable"
+                checked={formData.isAvailable}
+                onChange={handleInputChange}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500 transition-all after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full" />
+            </label>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition-colors"

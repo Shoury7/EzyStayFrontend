@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Header from "./Header";
-
+import { ArrowLeft } from "lucide-react";
 const Notfound = () => {
   return (
     <div className="bg-gray-900 min-h-screen text-white">
@@ -21,8 +21,9 @@ const Notfound = () => {
 
         <Link
           to="/"
-          className="bg-red-600 hover:bg-red-700 transition-all duration-200 text-white font-medium py-2 px-6 rounded-full shadow-lg"
+          className="bg-red-600 hover:bg-red-700 transition-all duration-200 text-white font-medium py-2 px-6 rounded-full shadow-lg flex items-center"
         >
+          <ArrowLeft size={20} className="mr-2" />
           Back to Home
         </Link>
       </div>

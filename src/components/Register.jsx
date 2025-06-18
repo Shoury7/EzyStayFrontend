@@ -18,19 +18,22 @@ const Register = () => {
     const secretKeyValue = secretKey?.current.value;
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: nameValue,
-          email: emailValue,
-          password: passwordValue,
-          role: role,
-          adminKey: isAdmin ? secretKeyValue : null,
-        }),
-      });
+      const response = await fetch(
+        "https://ezystaybackend.onrender.com/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: nameValue,
+            email: emailValue,
+            password: passwordValue,
+            role: role,
+            adminKey: isAdmin ? secretKeyValue : null,
+          }),
+        }
+      );
 
       const data = await response.json();
 
